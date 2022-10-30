@@ -27,20 +27,20 @@ def get_token():
 	conn = http.client.HTTPSConnection(API_URL, 27200)
 
 	payload = json.dumps({
-  "username": username,
-  "password": password
-  })
+		"username": username,
+		"password": password
+		})
 
 	headers = {
-  'Content-Type': 'application/json'
-  }
+	'Content-Type': 'application/json'
+	}
 
 	conn.request("POST", "/rest/openapi/pvms/v1/login", payload, headers)
 	res = conn.getresponse()
 	data = res.read()
 	token = res.getheader("XSRF-TOKEN")
 	print("token:" , token)
-  
+
 	conn.close() 
 	return(token)
 
@@ -87,7 +87,7 @@ def get_currentdata(stationid):
 	res = conn.getresponse()
 	dataLength = res.getheader('content-length')
 
-  # Handling Response Errors
+	# Handling Response Errors
 	if dataLength=="0":
 		print("Empty Response Body")
 
