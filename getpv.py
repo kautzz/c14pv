@@ -68,12 +68,23 @@ def get_deviceList(token):
   return(data)
 
 
+def renew_token():
+	print("Renewing Token")
+
+	newtoken = get_token()
+	activetoken['token']['active'] = newtoken
+
+	with open('token.ini', 'w') as configfile:
+		activetoken.write(configfile)
+
+	return(newtoken)
+
 
 def get_currentdata(stationid):
 
 	conn = http.client.HTTPSConnection(API_URL, 27200)
-
 	payload = json.dumps({"plantCodes": stationid})
+	newtoken = token
 
 	headers = {
 		'Content-Type': 'application/json', 
@@ -90,26 +101,24 @@ def get_currentdata(stationid):
 	# Handling Response Errors
 	if dataLength=="0":
 		print("Empty Response Body")
-
-		newtoken = get_token()
-		activetoken['token']['active'] = newtoken
-
-		with open('token.ini', 'w') as configfile:
-			activetoken.write(configfile)
-
-		headers = {
-			'Content-Type': 'application/json', 
-			'XSRF-TOKEN': newtoken
-		}
-
+		newtoken = renew_token()
+	
+	else:
+		data = json.loads(res.read())
 		try:
-			data = json.loads(res.read())
+			if data["failCode"] == 305:
+				print("failcode 305")
+				newtoken = renew_token()
 		except:
-			print("Requesting Data Again")
-	
-		conn.request("POST","/rest/openapi/pvms/v1/vpp/plantRealtimeKpi", payload, headers)
-		res = conn.getresponse()
-	
+			pass
+
+	headers = {
+		'Content-Type': 'application/json', 
+		'XSRF-TOKEN': newtoken
+	}
+
+	conn.request("POST","/rest/openapi/pvms/v1/vpp/plantRealtimeKpi", payload, headers)
+	res = conn.getresponse()
 	data = json.loads(res.read())
 	print(data)
 	if "dataItemMap" in data["data"][0]:
