@@ -111,6 +111,7 @@ def get_currentdata(stationid):
 		res = conn.getresponse()
 	
 	data = json.loads(res.read())
+	print(data)
 	if "dataItemMap" in data["data"][0]:
 		inverter_data = data["data"][0]["dataItemMap"]
 
