@@ -32,7 +32,7 @@ def get_token():
 		})
 
 	headers = {
-	'Content-Type': 'application/json'
+		'Content-Type': 'application/json'
 	}
 
 	conn.request("POST", "/rest/openapi/pvms/v1/login", payload, headers)
@@ -76,8 +76,8 @@ def get_currentdata(stationid):
 	payload = json.dumps({"plantCodes": stationid})
 
 	headers = {
-	'Content-Type': 'application/json', 
-	'XSRF-TOKEN': token
+		'Content-Type': 'application/json', 
+		'XSRF-TOKEN': token
 	}
 
 	print("Getting current data: ")
@@ -98,8 +98,8 @@ def get_currentdata(stationid):
 			activetoken.write(configfile)
 
 		headers = {
-		'Content-Type': 'application/json', 
-		'XSRF-TOKEN': newtoken
+			'Content-Type': 'application/json', 
+			'XSRF-TOKEN': newtoken
 		}
 
 		try:
@@ -111,7 +111,7 @@ def get_currentdata(stationid):
 		res = conn.getresponse()
 	
 	data = json.loads(res.read())
-	if "dataItemMap" in data['data'][0]:
+	if "dataItemMap" in data["data"][0]:
 		inverter_data = data["data"][0]["dataItemMap"]
 
 		send_to_mqtt(inverter_data)
@@ -139,4 +139,3 @@ def send_to_mqtt(inverter_data):
 #print(str(devices))
 
 current_data = get_currentdata(FS_API['stationid'])
-print("")
